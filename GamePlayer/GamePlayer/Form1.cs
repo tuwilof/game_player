@@ -102,16 +102,21 @@ namespace GamePlayer
         {
             if (flag)
             {
+                if (barriers.checkGameOver(width, height, level, map) )
+                {
+                    timer1.Dispose();
+                    MessageBox.Show("Игра окончена", "Вы победили", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    flag = false;
+                }
                 if (level % 2 == 0)
                 {
                     barriers.appearingAndDisappearingBarriers(width, height, ref map, level, 0.5);
-                    level++;
                 }
                 else
                 {
                     player.permutationPlayer(width, height, ref map, level, code);
-                    level++;
                 }
+                level++;
                 pictureBox1.Invalidate();
             }
         }
