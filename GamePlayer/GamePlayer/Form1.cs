@@ -69,7 +69,7 @@ namespace GamePlayer
 
         public void drawGrid(Graphics g)
         {
-            Pen p = new Pen(Color.Black);
+            Pen p = new Pen(Color.White);
             for (int i = 0; i < width * pixWidth + 1; i = i + pixWidth)
             {
                 g.DrawLine(p, i, 0, i, height * pixHeight);
@@ -82,27 +82,29 @@ namespace GamePlayer
 
         public void draw(Graphics g, int x, int y, int type)
         {
-            SolidBrush b = new SolidBrush(Color.White);
+            Image newImage = Image.FromFile(@"..\..\img\null.png"); ;
+            Rectangle rect = new Rectangle(1 + x * pixWidth, 1 + y * pixHeight, pixWidth, pixHeight);
 
             if (type == 0)
-                b = new SolidBrush(Color.Yellow);
+            {
+                newImage = Image.FromFile(@"..\..\img\snow\bg.png");
+            }
             else if (type == 1)
-                b = new SolidBrush(Color.Green);
+            {
+                newImage = Image.FromFile(@"..\..\img\snow\car.png");
+            }
             else if (type == 2)
-                b = new SolidBrush(Color.Red);
-            g.FillPolygon(b, new PointF[] { 
-                new PointF(1 + x * pixWidth, 1 + y * pixHeight), 
-                new PointF(1 + x * pixWidth, pixHeight + y * pixHeight), 
-                new PointF(pixWidth + x * pixWidth, pixHeight + y * pixHeight), 
-                new PointF(pixWidth + x * pixWidth, 1 + y * pixHeight) 
-            });
+            {
+                newImage = Image.FromFile(@"..\..\img\snow\barrier.png");
+            }
+            g.DrawImage(newImage, rect);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (flag)
             {
-                if (barriers.checkGameOver(width, height, level, map) )
+                if (barriers.checkGameOver(width, height, level, map))
                 {
                     timer1.Dispose();
                     MessageBox.Show("Игра окончена", "Вы победили", MessageBoxButtons.OK, MessageBoxIcon.Information);
