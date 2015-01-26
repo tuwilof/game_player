@@ -40,9 +40,9 @@ namespace GamePlayer
             foreach (var item in code.Main)
             {
                 findObject(width, height, level, map, ref x, ref y);
-                if (item.Operation == "move1")
+                if (item.Operation == "move" && item.Details[0].From != null && item.Details[0].Into != null)
                     move1(ref map, level, item);
-                else if (item.Operation == "move2")
+                else if (item.Operation == "move" && item.Details[0].To != null)
                     move2(ref map, level, item, x, y);
             }
         }
