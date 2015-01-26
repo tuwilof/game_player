@@ -10,13 +10,7 @@ namespace GamePlayer
     public class Constructor
     {
         public string Operation { get; set; }
-        public Detailschange Detailschange { get; set; }
-    }
-
-    public class Detailschange
-    {
-        public string Object { get; set; }
-        public At At { get; set; }
+        public List<Details> Details { get; set; }
     }
 
     public class At
@@ -28,7 +22,7 @@ namespace GamePlayer
     public class Main
     {
         public string Operation { get; set; }
-        public Details Details { get; set; }
+        public List<Details> Details { get; set; }
     }
 
     public class Details
@@ -36,6 +30,8 @@ namespace GamePlayer
         public string Object { get; set; }
         public From From { get; set; }
         public Into Into { get; set; }
+        public At At { get; set; }
+        public To To { get; set; }
     }
 
     public class From
@@ -47,5 +43,11 @@ namespace GamePlayer
     {
         public int X { get; set; }
         public int Y { get; set; }
+    }
+
+    public class To
+    {
+        public string Dx { get; set; }
+        public string Dy { get; set; }
     }
 }

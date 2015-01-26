@@ -35,28 +35,74 @@ namespace GamePlayer
 
         private void executeProgram(int width, int height, int level, ref int[, ,] map, Code code)
         {
+            int x = 0;
+            int y = 0;
             foreach (var item in code.Main)
             {
-                if (item.Operation == "move")
-                    move(ref map, level, item);
+                findObject(width, height, level, map, ref x, ref y);
+                if (item.Operation == "move1")
+                    move1(ref map, level, item);
+                else if (item.Operation == "move2")
+                    move2(ref map, level, item, x, y);
             }
         }
 
         private void change(ref int[, ,] map, int level, Constructor constructor)
         {
-            int xAt = constructor.Detailschange.At.X;
-            int yAt = constructor.Detailschange.At.Y;
+            int xAt = constructor.Details[0].At.X;
+            int yAt = constructor.Details[0].At.Y;
             map[xAt, yAt, level] = 1;
         }
 
-        private void move(ref int[, ,] map, int level, Main main)
+        private void move1(ref int[, ,] map, int level, Main main)
         {
-            int xFrom = main.Details.From.X;
-            int yFrom = main.Details.From.Y;
-            int xInto = main.Details.Into.X;
-            int yInto = main.Details.Into.Y;
+            int xFrom = main.Details[0].From.X;
+            int yFrom = main.Details[0].From.Y;
+            int xInto = main.Details[0].Into.X;
+            int yInto = main.Details[0].Into.Y;
             map[xInto, yInto, level] = map[xFrom, yFrom, level];
             map[xFrom, yFrom, level] = 0;
+        }
+
+        private void move2(ref int[, ,] map, int level, Main main, int x, int y)
+        {
+            int shiftX = 0;
+            int shiftY = 0;
+            if (main.Details[0].To.Dx[0] == '+')
+            {
+                shiftX += Int32.Parse("" + main.Details[0].To.Dx[1]);  
+            }
+            else if (main.Details[0].To.Dx[0] == '-')
+            {
+                shiftX -= Int32.Parse("" + main.Details[0].To.Dx[1]);
+            }
+            if (main.Details[0].To.Dy[0] == '+')
+            {
+                shiftY += Int32.Parse("" + main.Details[0].To.Dy[1]);
+            }
+            else if (main.Details[0].To.Dy[0] == '-')
+            {
+                shiftY -= Int32.Parse("" + main.Details[0].To.Dy[1]);
+            }
+
+            map[x + shiftX, y + shiftY, level] = map[x, y, level];
+            map[x, y, level] = 0;
+        }
+
+        private void findObject(int width, int height, int level, int[, ,] map, ref int x, ref int y)
+        {
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    if (map[i, j, level] == 1)
+                    {
+                        x = i;
+                        y = j;
+                        return;
+                    }
+                }
+            }
         }
 
         private void reseed(int width, int height, int level, ref int[, ,] map)
