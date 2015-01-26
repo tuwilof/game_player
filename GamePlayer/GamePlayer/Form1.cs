@@ -104,7 +104,7 @@ namespace GamePlayer
             {
                 if (level % 2 == 0)
                 {
-                    barriers.appearingAndDisappearingBarriers(width, height, ref map, level);
+                    barriers.appearingAndDisappearingBarriers(width, height, ref map, level, 0.5);
                     level++;
                 }
                 else

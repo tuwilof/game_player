@@ -32,6 +32,7 @@ namespace GamePlayer
         public Into Into { get; set; }
         public At At { get; set; }
         public To To { get; set; }
+        public string State { get; set; }
     }
 
     public class From

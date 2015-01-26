@@ -8,15 +8,16 @@ namespace GamePlayer
 {
     class ControlProgram
     {
+        private bool flagConstructor = true;
         private bool flag = true;
 
         public void permutationPlayer(int width, int height, ref int[, ,] map, int level, Code code)
         {
             reseed(width, height, level, ref map);
-            if (flag)
+            if (flagConstructor)
             {
                 executeConstructor(width, height, level, ref map, code);
-                flag = false;
+                flagConstructor = false;
             }
             else
             {
@@ -40,10 +41,18 @@ namespace GamePlayer
             foreach (var item in code.Main)
             {
                 findObject(width, height, level, map, ref x, ref y);
-                if (item.Operation == "move" && item.Details[0].From != null && item.Details[0].Into != null)
-                    move1(ref map, level, item);
+                if (item.Operation == "check" && item.Details[0].To != null)
+                    flag = checkTo(ref map, level, item, x, y);
+                else if (item.Operation == "move" && item.Details[0].From != null && item.Details[0].Into != null)
+                {
+                    if (flag) moveFromInto(ref map, level, item);
+                    flag = true;
+                }
                 else if (item.Operation == "move" && item.Details[0].To != null)
-                    move2(ref map, level, item, x, y);
+                {
+                    if (flag) moveTo(ref map, level, item, x, y);
+                    flag = true;
+                }
             }
         }
 
@@ -54,7 +63,35 @@ namespace GamePlayer
             map[xAt, yAt, level] = 1;
         }
 
-        private void move1(ref int[, ,] map, int level, Main main)
+        private bool checkTo(ref int[, ,] map, int level, Main main, int x, int y)
+        {
+            int shiftX = 0;
+            int shiftY = 0;
+
+            if (main.Details[0].To.Dx[0] == '+')
+            {
+                shiftX += Int32.Parse("" + main.Details[0].To.Dx[1]);
+            }
+            else if (main.Details[0].To.Dx[0] == '-')
+            {
+                shiftX -= Int32.Parse("" + main.Details[0].To.Dx[1]);
+            }
+            if (main.Details[0].To.Dy[0] == '+')
+            {
+                shiftY += Int32.Parse("" + main.Details[0].To.Dy[1]);
+            }
+            else if (main.Details[0].To.Dy[0] == '-')
+            {
+                shiftY -= Int32.Parse("" + main.Details[0].To.Dy[1]);
+            }
+
+            if (map[x + shiftX, y + shiftY, level] == 0)
+                return true;
+            else
+                return false;
+        }
+
+        private void moveFromInto(ref int[, ,] map, int level, Main main)
         {
             int xFrom = main.Details[0].From.X;
             int yFrom = main.Details[0].From.Y;
@@ -64,13 +101,13 @@ namespace GamePlayer
             map[xFrom, yFrom, level] = 0;
         }
 
-        private void move2(ref int[, ,] map, int level, Main main, int x, int y)
+        private void moveTo(ref int[, ,] map, int level, Main main, int x, int y)
         {
             int shiftX = 0;
             int shiftY = 0;
             if (main.Details[0].To.Dx[0] == '+')
             {
-                shiftX += Int32.Parse("" + main.Details[0].To.Dx[1]);  
+                shiftX += Int32.Parse("" + main.Details[0].To.Dx[1]);
             }
             else if (main.Details[0].To.Dx[0] == '-')
             {

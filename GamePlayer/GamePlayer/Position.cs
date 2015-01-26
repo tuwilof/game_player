@@ -8,10 +8,10 @@ namespace GamePlayer
 {
     class Position
     {
-        public void appearingAndDisappearingBarriers(int width, int height, ref int[, ,] map, int level)
+        public void appearingAndDisappearingBarriers(int width, int height, ref int[, ,] map, int level, double ratioBarriers)
         {
             if (level != 0 ) reseed(width, height, level, ref map);
-            placeBarriers(width, height, level, ref map);
+            placeBarriers(width, height, level, ref map, ratioBarriers);
         }
 
         private void reseed(int width, int height, int level, ref int[, ,] map)
@@ -26,10 +26,10 @@ namespace GamePlayer
             }
         }
 
-        private void placeBarriers(int width, int height, int level, ref int[, ,] map)
+        private void placeBarriers(int width, int height, int level, ref int[, ,] map, double ratioBarriers)
         {
             Random rand = new Random();
-            int ratio = (int)(width * height * 0.2);
+            int ratio = (int)(width * height * ratioBarriers);
 
             int xBarrier;
             int yBarrier;
