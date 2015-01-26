@@ -33,6 +33,7 @@ namespace GamePlayer
         public At At { get; set; }
         public To To { get; set; }
         public string State { get; set; }
+        public int Repeat { get; set; }
     }
 
     public class From

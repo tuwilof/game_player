@@ -87,15 +87,15 @@ namespace GamePlayer
 
             if (type == 0)
             {
-                newImage = Image.FromFile(@"..\..\img\snow\bg.png");
+                newImage = Image.FromFile(@"..\..\img\asphalt\bg.png");
             }
             else if (type == 1)
             {
-                newImage = Image.FromFile(@"..\..\img\snow\car.png");
+                newImage = Image.FromFile(@"..\..\img\asphalt\car.png");
             }
             else if (type == 2)
             {
-                newImage = Image.FromFile(@"..\..\img\snow\barrier.png");
+                newImage = Image.FromFile(@"..\..\img\asphalt\barrier.png");
             }
             g.DrawImage(newImage, rect);
         }
