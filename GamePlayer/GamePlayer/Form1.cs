@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace GamePlayer
 {
@@ -21,7 +18,7 @@ namespace GamePlayer
         int pixHeight;
         Position barriers;
         ControlProgram player;
-        string str;
+        Code code;
 
         public Form1()
         {
@@ -30,15 +27,17 @@ namespace GamePlayer
             flag = false;
             barriers = new Position();
             player = new ControlProgram();
+            this.Width = 443;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                System.IO.StreamReader sr = new System.IO.StreamReader(openFileDialog1.FileName);
-                str = sr.ReadToEnd();
-                sr.Close();
+                string Document = File.ReadAllText(openFileDialog1.FileName);
+                var input = new StringReader(Document);
+                var deserializer = new Deserializer(namingConvention: new CamelCaseNamingConvention());
+                code = deserializer.Deserialize<Code>(input);
             }
         }
 
@@ -62,7 +61,7 @@ namespace GamePlayer
                 {
                     for (int j = 0; j < height; j++)
                     {
-                        draw(e.Graphics, i, j, map[i, j, level]);
+                        draw(e.Graphics, i, j, map[i, j, level - 1]);
                     }
                 }
             }
@@ -84,6 +83,7 @@ namespace GamePlayer
         public void draw(Graphics g, int x, int y, int type)
         {
             SolidBrush b = new SolidBrush(Color.White);
+
             if (type == 0)
                 b = new SolidBrush(Color.Yellow);
             else if (type == 1)
@@ -105,74 +105,21 @@ namespace GamePlayer
                 if (level % 2 == 0)
                 {
                     barriers.appearingAndDisappearingBarriers(width, height, ref map, level);
+                    level++;
                 }
                 else
                 {
-                    player.permutationPlayer(width, height, ref map, str);
+                    player.permutationPlayer(width, height, ref map, level, code);
                     level++;
                 }
                 pictureBox1.Invalidate();
             }
         }
-    }
 
-    class ControlProgram
-    {
-        public void permutationPlayer(int width, int height, ref int[, ,] map, string str)
+        private void button3_Click(object sender, EventArgs e)
         {
-
-        }
-    }
-
-    class Position
-    {
-        public void appearingAndDisappearingBarriers(int width, int height, ref int[, ,] map, int level)
-        {
-            int x = 0;
-            int y = 0;
-
-            clearMapAndFindPlayer(width, height, level, ref x, ref y, ref map);
-            placeBarriers(width, height, level, x, y, ref map);
-        }
-
-        private void clearMapAndFindPlayer(int width, int height, int level, ref int x, ref int y, ref int[, ,] map)
-        {
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    if (map[i, j, level] == 1)
-                    {
-                        x = i;
-                        y = j;
-                        map[i, j, level] = 0;
-                    }
-                    else
-                    {
-                        map[i, j, level] = 0;
-                    }
-                }
-            }
-        }
-
-        private void placeBarriers(int width, int height, int level, int xPlayer, int yPlayer, ref int[, ,] map)
-        {
-            Random rand = new Random();
-            int ratio = (int)(width * height * 0.2);
-
-            int xBarrier;
-            int yBarrier;
-            for (int i = 0; i < ratio; i++)
-            {
-                xBarrier = rand.Next(width);
-                yBarrier = rand.Next(height);
-                while ((xBarrier == xPlayer && yBarrier == yPlayer) || (map[xBarrier, yBarrier, level] == 2))
-                {
-                    xBarrier = rand.Next(width);
-                    yBarrier = rand.Next(height);
-                }
-                map[xBarrier, yBarrier, level] = 2;
-            }
+            if (this.Width != 800) this.Width = 800;
+            else this.Width = 443;
         }
     }
 }
