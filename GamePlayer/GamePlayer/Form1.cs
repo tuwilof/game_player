@@ -9,7 +9,7 @@ namespace GamePlayer
 {
     public partial class Form1 : Form
     {
-        int[, ,] map;
+        string[, ,] map;
         int width;
         int height;
         int level;
@@ -20,6 +20,8 @@ namespace GamePlayer
         ControlProgram player;
         Code code;
         bool allBad = false;
+        string[,] arrayPositionsObjects = new string[1000,3];
+        int countObject = 0;
 
         public Form1()
         {
@@ -47,7 +49,7 @@ namespace GamePlayer
             {
                 width = Int32.Parse(textBox1.Text);
                 height = Int32.Parse(textBox2.Text);
-                map = new int[width, height, 10000];
+                map = new string[width, height, 10000];
                 level = 0;
                 flag = true;
             }
@@ -87,22 +89,22 @@ namespace GamePlayer
             }
         }
 
-        public void draw(Graphics g, int x, int y, int type)
+        public void draw(Graphics g, int x, int y, string type)
         {
             Image newImage = Image.FromFile(@"..\..\img\null.png"); ;
             Rectangle rect = new Rectangle(1 + x * pixWidth, 1 + y * pixHeight, pixWidth, pixHeight);
 
-            if (type == 0)
+            if (type == null)
             {
                 newImage = Image.FromFile(@"..\..\img\asphalt\bg.png");
             }
-            else if (type == 1)
-            {
-                newImage = Image.FromFile(@"..\..\img\asphalt\car.png");
-            }
-            else if (type == 2)
+            else if (type == "barrier")
             {
                 newImage = Image.FromFile(@"..\..\img\asphalt\barrier.png");
+            }
+            else 
+            {
+                newImage = Image.FromFile(@"..\..\img\asphalt\car.png");
             }
             g.DrawImage(newImage, rect);
         }
@@ -120,11 +122,11 @@ namespace GamePlayer
                 }
                 if (level % 2 == 0)
                 {
-                    barriers.appearingAndDisappearingBarriers(width, height, ref map, level, 0.4);
+                    barriers.appearingAndDisappearingBarriers(width, height, ref map, level, 0.01);
                 }
                 else
                 {
-                    player.permutationPlayer(width, height, ref map, level, code, ref allBad);
+                    player.permutationPlayer(width, height, ref map, level, code, ref allBad, ref arrayPositionsObjects, ref countObject);
                 }
                 level++;
                 pictureBox1.Invalidate();

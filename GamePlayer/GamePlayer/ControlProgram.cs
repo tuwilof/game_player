@@ -11,47 +11,48 @@ namespace GamePlayer
         private bool flagConstructor = true;
         private bool flag = true;
         int[] data = new int[10000];
-        bool[] flagData= new bool[10000];
+        bool[] flagData = new bool[10000];
 
 
-        public void permutationPlayer(int width, int height, ref int[, ,] map, int level, Code code, ref bool allBad)
+        public void permutationPlayer(int width, int height, ref string[, ,] map, int level, Code code, ref bool allBad, ref string[,] arrayPositionsObjects, ref int countObject)
         {
             reseed(width, height, level, ref map);
             if (flagConstructor)
             {
-                executeConstructor(width, height, level, ref map, code);
+                executeConstructor(width, height, level, ref map, code, ref arrayPositionsObjects, ref countObject);
                 flagConstructor = false;
             }
             else
             {
-                executeProgram(width, height, level, ref map, code, ref allBad);
+                executeProgram(width, height, level, ref map, code, ref allBad, ref arrayPositionsObjects, ref countObject);
             }
         }
 
-        private void executeConstructor(int width, int height, int level, ref int[, ,] map, Code code)
+        private void executeConstructor(int width, int height, int level, ref string[, ,] map, Code code, ref string[,] arrayPositionsObjects, ref int countObject)
         {
             foreach (var item in code.Constructor)
             {
                 if (item.Operation == "change")
-                    change(ref map, level, item);
+                    change(ref map, level, item, ref arrayPositionsObjects, ref countObject);
             }
         }
 
-        private void executeProgram(int width, int height, int level, ref int[, ,] map, Code code, ref bool allBad)
+        private void executeProgram(int width, int height, int level, ref string[, ,] map, Code code, ref bool allBad, ref string[,] arrayPositionsObjects, ref int countObject)
         {
-            int x = 0;
-            int y = 0;
+            int index = 0;
             int i = 0;
             foreach (var item in code.Main)
             {
-                findObject(width, height, level, map, ref x, ref y);
                 if (item.Operation == "check" && item.Details[0].To != null)
-                    flag = checkTo(ref map, level, item, x, y, i);
+                {
+                    findObject(width, height, level, map, ref index, ref arrayPositionsObjects, ref countObject, item.Details[0].Object);
+                    flag = checkTo(ref map, level, item, index, i, ref arrayPositionsObjects, ref countObject);
+                }
                 else if (item.Operation == "move" && item.Details[0].From != null && item.Details[0].Into != null)
                 {
                     if (flag)
                     {
-                        moveFromInto(ref map, level, item);
+                        moveFromInto(ref map, level, item, ref arrayPositionsObjects, ref countObject, index);
                         flag = true;
                         allBad = false;
                         break;
@@ -61,7 +62,8 @@ namespace GamePlayer
                 {
                     if (flag)
                     {
-                        moveTo(ref map, level, item, x, y);
+                        findObject(width, height, level, map, ref index, ref arrayPositionsObjects, ref countObject, item.Details[0].Object);
+                        moveTo(ref map, level, item, index, ref arrayPositionsObjects, ref countObject);
                         flag = true;
                         allBad = false;
                         break;
@@ -72,14 +74,18 @@ namespace GamePlayer
             }
         }
 
-        private void change(ref int[, ,] map, int level, Constructor constructor)
+        private void change(ref string[, ,] map, int level, Constructor constructor, ref string[,] arrayPositionsObjects, ref int countObject)
         {
             int xAt = constructor.Details[0].At.X;
             int yAt = constructor.Details[0].At.Y;
-            map[xAt, yAt, level] = 1;
+            map[xAt, yAt, level] = constructor.Details[0].Object;
+            arrayPositionsObjects[countObject, 0] = constructor.Details[0].Object;
+            arrayPositionsObjects[countObject, 1] = "" + constructor.Details[0].At.X;
+            arrayPositionsObjects[countObject, 2] = "" + constructor.Details[0].At.Y;
+            countObject++;
         }
 
-        private bool checkTo(ref int[, ,] map, int level, Main main, int x, int y, int i)
+        private bool checkTo(ref string[, ,] map, int level, Main main, int index, int i, ref string[,] arrayPositionsObjects, ref int countObject)
         {
             int shiftX = 0;
             int shiftY = 0;
@@ -109,7 +115,7 @@ namespace GamePlayer
                 }
                 data[i]--;
 
-                if (map[x + shiftX, y + shiftY, level] == 0)
+                if (map[Int32.Parse(arrayPositionsObjects[index, 1]) + shiftX, Int32.Parse(arrayPositionsObjects[index, 2]) + shiftY, level] == null)
                     return true;
                 else
                     return false;
@@ -117,17 +123,19 @@ namespace GamePlayer
             return false;
         }
 
-        private void moveFromInto(ref int[, ,] map, int level, Main main)
+        private void moveFromInto(ref string[, ,] map, int level, Main main, ref string[,] arrayPositionsObjects, ref int countObject, int index)
         {
             int xFrom = main.Details[0].From.X;
             int yFrom = main.Details[0].From.Y;
             int xInto = main.Details[0].Into.X;
             int yInto = main.Details[0].Into.Y;
             map[xInto, yInto, level] = map[xFrom, yFrom, level];
-            map[xFrom, yFrom, level] = 0;
+            map[xFrom, yFrom, level] = null;
+            arrayPositionsObjects[index, 1] = "" + xFrom;
+            arrayPositionsObjects[index, 2] = "" + yFrom;
         }
 
-        private void moveTo(ref int[, ,] map, int level, Main main, int x, int y)
+        private void moveTo(ref string[, ,] map, int level, Main main, int index, ref string[,] arrayPositionsObjects, ref int countObject)
         {
             int shiftX = 0;
             int shiftY = 0;
@@ -148,27 +156,26 @@ namespace GamePlayer
                 shiftY -= Int32.Parse("" + main.Details[0].To.Dy[1]);
             }
 
-            map[x + shiftX, y + shiftY, level] = map[x, y, level];
-            map[x, y, level] = 0;
+
+            map[Int32.Parse(arrayPositionsObjects[index, 1]) + shiftX, Int32.Parse(arrayPositionsObjects[index, 2]) + shiftY, level] = map[Int32.Parse(arrayPositionsObjects[index, 1]), Int32.Parse(arrayPositionsObjects[index, 2]), level];
+            map[Int32.Parse(arrayPositionsObjects[index, 1]), Int32.Parse(arrayPositionsObjects[index, 2]), level] = null;
+            arrayPositionsObjects[index, 1] = "" + (Int32.Parse(arrayPositionsObjects[index, 1]) + shiftX);
+            arrayPositionsObjects[index, 2] = "" + (Int32.Parse(arrayPositionsObjects[index, 2]) + shiftY);
         }
 
-        private void findObject(int width, int height, int level, int[, ,] map, ref int x, ref int y)
+        private void findObject(int width, int height, int level, string[, ,] map, ref int index, ref string[,] arrayPositionsObjects, ref int countObject, string nameObject)
         {
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i < countObject; i++)
             {
-                for (int j = 0; j < width; j++)
-                {
-                    if (map[i, j, level] == 1)
+                    if (arrayPositionsObjects[i, 0] == nameObject)
                     {
-                        x = i;
-                        y = j;
+                        index = i;
                         return;
                     }
-                }
             }
         }
 
-        private void reseed(int width, int height, int level, ref int[, ,] map)
+        private void reseed(int width, int height, int level, ref string[, ,] map)
         {
             for (int i = 0; i < width; i++)
             {
