@@ -46,7 +46,7 @@ namespace GamePlayer
                 if (item.Operation == "check" && item.Details[0].To != null)
                 {
                     findObject(width, height, level, map, ref index, ref arrayPositionsObjects, ref countObject, item.Details[0].Object);
-                    flag = checkTo(ref map, level, item, index, i, ref arrayPositionsObjects, ref countObject);
+                    flag = checkTo(ref map, level, item, index, i, ref arrayPositionsObjects, ref countObject, width, height);
                 }
                 else if (item.Operation == "move" && item.Details[0].From != null && item.Details[0].Into != null)
                 {
@@ -69,7 +69,8 @@ namespace GamePlayer
                         break;
                     }
                 }
-                allBad = true;
+                if (data[i / 2] == 0)
+                    allBad = true;
                 i++;
             }
         }
@@ -85,7 +86,7 @@ namespace GamePlayer
             countObject++;
         }
 
-        private bool checkTo(ref string[, ,] map, int level, Main main, int index, int i, ref string[,] arrayPositionsObjects, ref int countObject)
+        private bool checkTo(ref string[, ,] map, int level, Main main, int index, int i, ref string[,] arrayPositionsObjects, ref int countObject, int width, int height)
         {
             int shiftX = 0;
             int shiftY = 0;
@@ -114,6 +115,9 @@ namespace GamePlayer
                     shiftY -= Int32.Parse("" + main.Details[0].To.Dy[1]);
                 }
                 data[i]--;
+
+                if (!(Int32.Parse(arrayPositionsObjects[index, 1]) + shiftX < width && Int32.Parse(arrayPositionsObjects[index, 2]) + shiftY < height))
+                    return false;
 
                 if (map[Int32.Parse(arrayPositionsObjects[index, 1]) + shiftX, Int32.Parse(arrayPositionsObjects[index, 2]) + shiftY, level] == null)
                     return true;
@@ -167,11 +171,11 @@ namespace GamePlayer
         {
             for (int i = 0; i < countObject; i++)
             {
-                    if (arrayPositionsObjects[i, 0] == nameObject)
-                    {
-                        index = i;
-                        return;
-                    }
+                if (arrayPositionsObjects[i, 0] == nameObject)
+                {
+                    index = i;
+                    return;
+                }
             }
         }
 
