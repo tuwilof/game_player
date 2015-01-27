@@ -28,7 +28,6 @@ namespace GamePlayer
             flag = false;
             barriers = new Position();
             player = new ControlProgram();
-            this.Width = 443;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -44,11 +43,18 @@ namespace GamePlayer
 
         private void button2_Click(object sender, EventArgs e)
         {
-            width = Int32.Parse(textBox1.Text);
-            height = Int32.Parse(textBox2.Text);
-            map = new int[width, height, 10000];
-            level = 0;
-            flag = true;
+            if (openFileDialog1.FileName != "openFileDialog1")
+            {
+                width = Int32.Parse(textBox1.Text);
+                height = Int32.Parse(textBox2.Text);
+                map = new int[width, height, 10000];
+                level = 0;
+                flag = true;
+            }
+            else
+            {
+                MessageBox.Show("Ошибка", "Отсутствует входная программа", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
@@ -109,11 +115,12 @@ namespace GamePlayer
                 {
                     timer1.Dispose();
                     MessageBox.Show("Игра окончена", "Вы победили", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close();
                     flag = false;
                 }
                 if (level % 2 == 0)
                 {
-                    barriers.appearingAndDisappearingBarriers(width, height, ref map, level, 0.01);
+                    barriers.appearingAndDisappearingBarriers(width, height, ref map, level, 0.4);
                 }
                 else
                 {
@@ -122,12 +129,6 @@ namespace GamePlayer
                 level++;
                 pictureBox1.Invalidate();
             }
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            if (this.Width != 800) this.Width = 800;
-            else this.Width = 443;
         }
     }
 }
