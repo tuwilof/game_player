@@ -1,46 +1,62 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace GamePlayer
 {
     public partial class Form1 : Form
     {
-        int[, ,] map;
+        string[, ,] map;
         int width;
         int height;
         int level;
         bool flag;
         int pixWidth;
         int pixHeight;
-        Position game;
+        Position barriers;
+        ControlProgram player;
+        Code code;
+        bool allBad = false;
+        string[,] arrayPositionsObjects = new string[1000,3];
+        int countObject = 0;
 
         public Form1()
         {
             InitializeComponent();
             DoubleBuffered = true;
             flag = false;
-            game = new Position();
+            barriers = new Position();
+            player = new ControlProgram();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string Document = File.ReadAllText(openFileDialog1.FileName);
+                var input = new StringReader(Document);
+                var deserializer = new Deserializer(namingConvention: new CamelCaseNamingConvention());
+                code = deserializer.Deserialize<Code>(input);
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            width = Int32.Parse(textBox1.Text);
-            height = Int32.Parse(textBox2.Text);
-            map = new int[width, height, 10000];
-            level = 0;
-            flag = true;
+            if (openFileDialog1.FileName != "openFileDialog1")
+            {
+                width = Int32.Parse(textBox1.Text);
+                height = Int32.Parse(textBox2.Text);
+                map = new string[width, height, 10000];
+                level = 0;
+                flag = true;
+            }
+            else
+            {
+                MessageBox.Show("Ошибка", "Отсутствует входная программа", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
@@ -54,7 +70,7 @@ namespace GamePlayer
                 {
                     for (int j = 0; j < height; j++)
                     {
-                        draw(e.Graphics, i, j, map[i, j, level]);
+                        draw(e.Graphics, i, j, map[i, j, level - 1]);
                     }
                 }
             }
@@ -62,7 +78,7 @@ namespace GamePlayer
 
         public void drawGrid(Graphics g)
         {
-            Pen p = new Pen(Color.Black);
+            Pen p = new Pen(Color.White);
             for (int i = 0; i < width * pixWidth + 1; i = i + pixWidth)
             {
                 g.DrawLine(p, i, 0, i, height * pixHeight);
@@ -73,88 +89,47 @@ namespace GamePlayer
             }
         }
 
-        public void draw(Graphics g, int x, int y, int type)
+        public void draw(Graphics g, int x, int y, string type)
         {
-            SolidBrush b = new SolidBrush(Color.White);
-            if (type == 0)
-                b = new SolidBrush(Color.Yellow);
-            else if (type == 1)
-                b = new SolidBrush(Color.Green);
-            else if (type == 2)
-                b = new SolidBrush(Color.Red);
-            g.FillPolygon(b, new PointF[] { 
-                new PointF(1 + x * pixWidth, 1 + y * pixHeight), 
-                new PointF(1 + x * pixWidth, pixHeight + y * pixHeight), 
-                new PointF(pixWidth + x * pixWidth, pixHeight + y * pixHeight), 
-                new PointF(pixWidth + x * pixWidth, 1 + y * pixHeight) 
-            });
+            Image newImage = Image.FromFile(@"..\..\img\null.png"); ;
+            Rectangle rect = new Rectangle(1 + x * pixWidth, 1 + y * pixHeight, pixWidth, pixHeight);
+
+            if (type == null)
+            {
+                newImage = Image.FromFile(@"..\..\img\asphalt\bg.png");
+            }
+            else if (type == "barrier")
+            {
+                newImage = Image.FromFile(@"..\..\img\asphalt\barrier.png");
+            }
+            else 
+            {
+                newImage = Image.FromFile(@"..\..\img\asphalt\car.png");
+            }
+            g.DrawImage(newImage, rect);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (flag)
             {
+                if (allBad)
+                {
+                    timer1.Dispose();
+                    MessageBox.Show("Игра окончена", "Вы победили", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close();
+                    flag = false;
+                }
                 if (level % 2 == 0)
                 {
-                    game.appearingAndDisappearingBarriers(width, height, ref map, level);
+                    barriers.appearingAndDisappearingBarriers(width, height, ref map, level, 0.01);
                 }
                 else
                 {
-                    level++;
+                    player.permutationPlayer(width, height, ref map, level, code, ref allBad, ref arrayPositionsObjects, ref countObject);
                 }
+                level++;
                 pictureBox1.Invalidate();
-            }
-        }
-    }
-
-    class Position
-    {
-        public void appearingAndDisappearingBarriers(int width, int height, ref int[, ,] map, int level)
-        {
-            int x = 0; 
-            int y = 0;
-
-            clearMapAndFindPlayer(width, height, level, ref x, ref y, ref map);
-            placeBarriers(width, height, level, x, y, ref map);
-        }
-
-        private void clearMapAndFindPlayer(int width, int height, int level, ref int x, ref int y, ref int[, ,] map)
-        {
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    if (map[i, j, level] == 1)
-                    {
-                        x = i;
-                        y = j;
-                        map[i, j, level] = 0;
-                    }
-                    else
-                    {
-                        map[i, j, level] = 0;
-                    }
-                }
-            }
-        }
-
-        private void placeBarriers(int width, int height, int level, int xPlayer, int yPlayer, ref int[, ,] map)
-        {
-            Random rand = new Random();
-            int ratio = (int)(width * height * 0.2);
-
-            int xBarrier;
-            int yBarrier;
-            for (int i = 0; i < ratio; i++)
-            {
-                    xBarrier = rand.Next(width);
-                    yBarrier = rand.Next(height);
-                    while ((xBarrier == xPlayer && yBarrier == yPlayer) || (map[xBarrier, yBarrier, level] == 2))
-                    {
-                        xBarrier = rand.Next(width);
-                        yBarrier = rand.Next(height);
-                    }
-                    map[xBarrier, yBarrier, level] = 2;
             }
         }
     }
