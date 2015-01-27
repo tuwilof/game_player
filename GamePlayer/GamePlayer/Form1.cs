@@ -19,6 +19,7 @@ namespace GamePlayer
         Position barriers;
         ControlProgram player;
         Code code;
+        bool allBad = false;
 
         public Form1()
         {
@@ -104,7 +105,7 @@ namespace GamePlayer
         {
             if (flag)
             {
-                if (barriers.checkGameOver(width, height, level, map))
+                if (allBad)
                 {
                     timer1.Dispose();
                     MessageBox.Show("Игра окончена", "Вы победили", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -112,11 +113,11 @@ namespace GamePlayer
                 }
                 if (level % 2 == 0)
                 {
-                    barriers.appearingAndDisappearingBarriers(width, height, ref map, level, 0.5);
+                    barriers.appearingAndDisappearingBarriers(width, height, ref map, level, 0.01);
                 }
                 else
                 {
-                    player.permutationPlayer(width, height, ref map, level, code);
+                    player.permutationPlayer(width, height, ref map, level, code, ref allBad);
                 }
                 level++;
                 pictureBox1.Invalidate();

@@ -14,7 +14,7 @@ namespace GamePlayer
         bool[] flagData= new bool[10000];
 
 
-        public void permutationPlayer(int width, int height, ref int[, ,] map, int level, Code code)
+        public void permutationPlayer(int width, int height, ref int[, ,] map, int level, Code code, ref bool allBad)
         {
             reseed(width, height, level, ref map);
             if (flagConstructor)
@@ -24,7 +24,7 @@ namespace GamePlayer
             }
             else
             {
-                executeProgram(width, height, level, ref map, code);
+                executeProgram(width, height, level, ref map, code, ref allBad);
             }
         }
 
@@ -37,7 +37,7 @@ namespace GamePlayer
             }
         }
 
-        private void executeProgram(int width, int height, int level, ref int[, ,] map, Code code)
+        private void executeProgram(int width, int height, int level, ref int[, ,] map, Code code, ref bool allBad)
         {
             int x = 0;
             int y = 0;
@@ -53,6 +53,7 @@ namespace GamePlayer
                     {
                         moveFromInto(ref map, level, item);
                         flag = true;
+                        allBad = false;
                         break;
                     }
                 }
@@ -62,9 +63,11 @@ namespace GamePlayer
                     {
                         moveTo(ref map, level, item, x, y);
                         flag = true;
+                        allBad = false;
                         break;
                     }
                 }
+                allBad = true;
                 i++;
             }
         }
