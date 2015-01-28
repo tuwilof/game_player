@@ -8,10 +8,20 @@ namespace GamePlayer
 {
     class Position
     {
-        public void appearingAndDisappearingBarriers(int width, int height, ref string[, ,] map, int level, double ratioBarriers)
+        bool flag = true;
+
+        public void appearingAndDisappearingBarriers(ref int width, ref int height, ref string[, ,] map, int level, Maps maps, ref int indexLevel)
         {
+            if (flag)
+            {
+                width = maps.Constructorm.width;
+                height = maps.Constructorm.height;
+                map = new string[width, height, 10000];
+                flag = false;
+            }
+
             if (level != 0) reseed(width, height, level, ref map);
-            placeBarriers(width, height, level, ref map, ratioBarriers);
+            placeBarriers(width, height, level, ref map, maps, ref indexLevel);
         }
 
         private void reseed(int width, int height, int level, ref string[, ,] map)
@@ -26,24 +36,17 @@ namespace GamePlayer
             }
         }
 
-        private void placeBarriers(int width, int height, int level, ref string[, ,] map, double ratioBarriers)
+        private void placeBarriers(int width, int height, int level, ref string[, ,] map, Maps maps, ref int indexLevel)
         {
-            Random rand = new Random();
-            int ratio = (int)(width * height * ratioBarriers);
-
-            int xBarrier;
-            int yBarrier;
-            for (int i = 0; i < ratio; i++)
+            foreach (var item in maps.Mainm[indexLevel].Levelm)
             {
-                xBarrier = rand.Next(width);
-                yBarrier = rand.Next(height);
-                while (map[xBarrier, yBarrier, level] != null)
-                {
-                    xBarrier = rand.Next(width);
-                    yBarrier = rand.Next(height);
-                }
-                map[xBarrier, yBarrier, level] = "barrier";
+                if (map[item.Positionm.X, item.Positionm.Y, level] == null)
+                    map[item.Positionm.X, item.Positionm.Y, level] = "barrier";
             }
+            indexLevel++;
+            if (indexLevel == maps.Mainm.Count)
+                indexLevel = 0;
+
         }
     }
 }

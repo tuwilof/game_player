@@ -19,9 +19,11 @@ namespace GamePlayer
         Position barriers;
         ControlProgram player;
         Code code;
+        Maps maps;
         bool allBad = false;
         string[,] arrayPositionsObjects = new string[1000,3];
         int countObject = 0;
+        int indexLevel = 0;
 
         public Form1()
         {
@@ -45,11 +47,8 @@ namespace GamePlayer
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (openFileDialog1.FileName != "openFileDialog1")
+            if (openFileDialog1.FileName != "openFileDialog1" && openFileDialog2.FileName != "openFileDialog2")
             {
-                width = Int32.Parse(textBox1.Text);
-                height = Int32.Parse(textBox2.Text);
-                map = new string[width, height, 10000];
                 level = 0;
                 flag = true;
             }
@@ -122,7 +121,7 @@ namespace GamePlayer
                 }
                 if (level % 2 == 0)
                 {
-                    barriers.appearingAndDisappearingBarriers(width, height, ref map, level, 0.4);
+                    barriers.appearingAndDisappearingBarriers(ref width, ref height, ref map, level, maps, ref indexLevel);
                 }
                 else
                 {
@@ -130,6 +129,17 @@ namespace GamePlayer
                 }
                 level++;
                 pictureBox1.Invalidate();
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog2.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string Document = File.ReadAllText(openFileDialog2.FileName);
+                var input = new StringReader(Document);
+                var deserializer = new Deserializer(namingConvention: new CamelCaseNamingConvention());
+                maps = deserializer.Deserialize<Maps>(input);
             }
         }
     }
