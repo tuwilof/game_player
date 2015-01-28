@@ -55,7 +55,7 @@ namespace GeneratorLevels
                 maps.mainm.Add(m);
             }
 
-            StreamWriter sw = new StreamWriter("qwe.yml", false, Encoding.UTF8);
+            StreamWriter sw = new StreamWriter("prepyatstvia.yml", false, Encoding.UTF8);
             var serializer = new Serializer();
             serializer.Serialize(sw, maps);
             sw.Close();
@@ -70,6 +70,15 @@ namespace GeneratorLevels
             int x = Int32.Parse(textBox9.Text);
             int y = Int32.Parse(textBox8.Text);
 
+
+            int w1 = Int32.Parse(textBox10.Text);
+            int h1 = Int32.Parse(textBox11.Text);
+
+            int w2 = Int32.Parse(textBox12.Text);
+            int h2 = Int32.Parse(textBox13.Text);
+
+            int w3 = Int32.Parse(textBox14.Text);
+            int h3 = Int32.Parse(textBox15.Text);
 
             Code code = new Code();
             details d;
@@ -92,16 +101,45 @@ namespace GeneratorLevels
 
 
             code.main = new List<main>();
+
+
+            int plus = 1;
+
+            if (w1 - x < 0)
+            {
+                plus = -2;
+            }
+            if (h1 - y < 0)
+            {
+                plus = -2;
+            }
+
             m = new main();
             m.operation = "check";
             m.details = new List<details>();
             d = new details();
             d.obj = "auto";
             d.state = "empty";
-            d.repeat = "10";
+            d.repeat = "" + (Math.Abs(y - h1) + Math.Abs(x - w1));
             to = new to();
-            to.dx = "+1";
+            to.dx = "0";
             to.dy = "0";
+            if (w1 - x < 0)
+            {
+                to.dx = "-1";
+            }
+            if (h1 - y < 0)
+            {
+                to.dy = "-1";
+            }
+            if (w1 - x > 0)
+            {
+                to.dx = "+1";
+            }
+            if (h1 - y > 0)
+            {
+                to.dy = "+1";
+            }
             d.to = to;
             m.details.Add(d);
             code.main.Add(m);
@@ -112,13 +150,163 @@ namespace GeneratorLevels
             d = new details();
             d.obj = "auto";
             to = new to();
-            to.dx = "+1";
+            to.dx = "0";
             to.dy = "0";
+            if (w1 - x < 0)
+            {
+                to.dx = "-1";
+            }
+            if (h1 - y < 0)
+            {
+                to.dy = "-1";
+            }
+            if (w1 - x > 0)
+            {
+                to.dx = "+1";
+            }
+            if (h1 - y > 0)
+            {
+                to.dy = "+1";
+            }
             d.to = to;
             m.details.Add(d);
             code.main.Add(m);
 
 
+            if (w2 - w1 < 0)
+            {
+                plus = -2;
+            }
+            if (h2 - h1 < 0)
+            {
+                plus = -2;
+            }
+
+            m = new main();
+            m.operation = "check";
+            m.details = new List<details>();
+            d = new details();
+            d.obj = "auto";
+            d.state = "empty";
+            d.repeat = "" + (Math.Abs(h2 - h1) + Math.Abs(w2 - w1));
+            to = new to();
+            to.dx = "0";
+            to.dy = "0";
+            if (w2 - w1 < 0)
+            {
+                to.dx = "-1";
+            }
+            if (h2 - h1 < 0)
+            {
+                to.dy = "-1";
+            }
+            if (w2 - w1 > 0)
+            {
+                to.dx = "+1";
+            }
+            if (h2 - h1 > 0)
+            {
+                to.dy = "+1";
+            }
+            d.to = to;
+            m.details.Add(d);
+            code.main.Add(m);
+
+            m = new main();
+            m.operation = "move";
+            m.details = new List<details>();
+            d = new details();
+            d.obj = "auto";
+            to = new to();
+            to.dx = "0";
+            to.dy = "0";
+            if (w2 - w1 < 0)
+            {
+                to.dx = "-1";
+            }
+            if (h2 - h1 < 0)
+            {
+                to.dy = "-1";
+            }
+            if (w2 - w1 > 0)
+            {
+                to.dx = "+1";
+            }
+            if (h2 - h1 > 0)
+            {
+                to.dy = "+1";
+            }
+            d.to = to;
+            m.details.Add(d);
+            code.main.Add(m);
+
+            if (w3 - w2 < 0)
+            {
+                plus = -2;
+            }
+            if (h3 - h2 < 0)
+            {
+                plus = -2;
+            }
+
+
+            m = new main();
+            m.operation = "check";
+            m.details = new List<details>();
+            d = new details();
+            d.obj = "auto";
+            d.state = "empty";
+            d.repeat = "" + (Math.Abs(y - h1) + Math.Abs(x - w1));
+            to = new to();
+            to.dx = "0";
+            to.dy = "0";
+            if (w3 - w2 < 0)
+            {
+                to.dx = "-1";
+            }
+            if (h3 - h2 < 0)
+            {
+                to.dy = "-1";
+            }
+            if (w3 - w2 > 0)
+            {
+                to.dx = "+1";
+            }
+            if (h3 - h2 > 0)
+            {
+                to.dy = "+1";
+            }
+            d.to = to;
+            m.details.Add(d);
+            code.main.Add(m);
+
+            m = new main();
+            m.operation = "move";
+            m.details = new List<details>();
+            d = new details();
+            d.obj = "auto";
+            to = new to();
+            to.dx = "0";
+            to.dy = "0";
+            if (w3 - w2 < 0)
+            {
+                to.dx = "-1";
+            }
+            if (h3 - h2 < 0)
+            {
+                to.dy = "-1";
+            }
+            if (w3 - w2 > 0)
+            {
+                to.dx = "+1";
+            }
+            if (h3 - h2 > 0)
+            {
+                to.dy = "+1";
+            }
+            d.to = to;
+            m.details.Add(d);
+            code.main.Add(m);
 
             /*
             maps.mainm = new List<mainm>();
@@ -142,7 +330,7 @@ namespace GeneratorLevels
                 maps.mainm.Add(m);
             }
             */
-            StreamWriter sw = new StreamWriter("pre.yml", false, Encoding.UTF8);
+            StreamWriter sw = new StreamWriter("objects.yml", false, Encoding.UTF8);
             var serializer = new Serializer();
             serializer.Serialize(sw, code);
             sw.Close();
