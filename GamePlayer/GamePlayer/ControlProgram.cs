@@ -45,7 +45,7 @@ namespace GamePlayer
             {
                 if (item.Operation == "check" && item.Details[0].To != null)
                 {
-                    findObject(width, height, level, map, ref index, ref arrayPositionsObjects, ref countObject, item.Details[0].Object);
+                    findObject(width, height, level, map, ref index, ref arrayPositionsObjects, ref countObject, item.Details[0].Obj);
                     flag = checkTo(ref map, level, item, index, i, ref arrayPositionsObjects, ref countObject, width, height);
                 }
                 else if (item.Operation == "move" && item.Details[0].From != null && item.Details[0].Into != null)
@@ -62,7 +62,7 @@ namespace GamePlayer
                 {
                     if (flag)
                     {
-                        findObject(width, height, level, map, ref index, ref arrayPositionsObjects, ref countObject, item.Details[0].Object);
+                        findObject(width, height, level, map, ref index, ref arrayPositionsObjects, ref countObject, item.Details[0].Obj);
                         moveTo(ref map, level, item, index, ref arrayPositionsObjects, ref countObject);
                         flag = true;
                         allBad = false;
@@ -79,8 +79,8 @@ namespace GamePlayer
         {
             int xAt = constructor.Details[0].At.X;
             int yAt = constructor.Details[0].At.Y;
-            map[xAt, yAt, level] = constructor.Details[0].Object;
-            arrayPositionsObjects[countObject, 0] = constructor.Details[0].Object;
+            map[xAt, yAt, level] = constructor.Details[0].Obj;
+            arrayPositionsObjects[countObject, 0] = constructor.Details[0].Obj;
             arrayPositionsObjects[countObject, 1] = "" + constructor.Details[0].At.X;
             arrayPositionsObjects[countObject, 2] = "" + constructor.Details[0].At.Y;
             countObject++;

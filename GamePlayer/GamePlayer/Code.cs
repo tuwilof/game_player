@@ -27,7 +27,7 @@ namespace GamePlayer
 
     public class Details
     {
-        public string Object { get; set; }
+        public string Obj { get; set; }
         public From From { get; set; }
         public Into Into { get; set; }
         public At At { get; set; }

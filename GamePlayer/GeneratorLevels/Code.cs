@@ -8,53 +8,53 @@ namespace GeneratorLevels
 {
     public class Code
     {
-        public List<Constructor> Constructor { get; set; }
-        public List<Main> Main { get; set; }
+        public List<constructor> constructor { get; set; }
+        public List<main> main { get; set; }
     }
 
-    public class Constructor
+    public class constructor
     {
-        public string Operation { get; set; }
-        public List<Details> Details { get; set; }
+        public string operation { get; set; }
+        public List<details> details { get; set; }
     }
 
-    public class At
+    public class at
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        public string x { get; set; }
+        public string y { get; set; }
     }
 
-    public class Main
+    public class main
     {
-        public string Operation { get; set; }
-        public List<Details> Details { get; set; }
+        public string operation { get; set; }
+        public List<details> details { get; set; }
     }
 
-    public class Details
+    public class details
     {
-        public string Object { get; set; }
-        public From From { get; set; }
-        public Into Into { get; set; }
-        public At At { get; set; }
-        public To To { get; set; }
-        public string State { get; set; }
-        public int Repeat { get; set; }
+        public string obj { get; set; }
+        public from from { get; set; }
+        public into into { get; set; }
+        public at at { get; set; }
+        public to to { get; set; }
+        public string state { get; set; }
+        public string repeat { get; set; }
     }
 
-    public class From
+    public class from
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        public string x { get; set; }
+        public string y { get; set; }
     }
-    public class Into
+    public class into
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        public string x { get; set; }
+        public string y { get; set; }
     }
 
-    public class To
+    public class to
     {
-        public string Dx { get; set; }
-        public string Dy { get; set; }
+        public string dx { get; set; }
+        public string dy { get; set; }
     }
 }
