@@ -19,15 +19,9 @@ namespace GeneratorLevels
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void generationBarriers(int level, int ratio, int width, int height)
         {
             Random rand = new Random();
-            int width = Int32.Parse(textBox1.Text);
-            int height = Int32.Parse(textBox2.Text);
-            double ratioBarriers = (double)Int32.Parse(textBox3.Text) / 100;
-            int ratio = (int)(width * height * ratioBarriers);
-            int level = Int32.Parse(textBox4.Text);
-
 
             Maps maps = new Maps();
             maps.constructorm = new constructorm();
@@ -59,7 +53,85 @@ namespace GeneratorLevels
             var serializer = new Serializer();
             serializer.Serialize(sw, maps);
             sw.Close();
+
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            int width = Int32.Parse(textBox1.Text);
+            int height = Int32.Parse(textBox2.Text);
+            double ratioBarriers = (double)Int32.Parse(textBox3.Text) / 100;
+            int ratio = (int)(width * height * ratioBarriers);
+            int level = Int32.Parse(textBox4.Text);
+
+            generationBarriers(level, ratio, width, height);
+        }
+
+        public void wayGeneration(ref Code code, int a1, int a2, int b1, int b2)
+        {
+            details d;
+            main m;
+            to to;
+
+            m = new main();
+            m.operation = "check";
+            m.details = new List<details>();
+            d = new details();
+            d.obj = "auto";
+            d.state = "empty";
+            d.repeat = "" + (Math.Abs(a1 - a2) + Math.Abs(b1 - b2));
+            to = new to();
+            to.dx = "0";
+            to.dy = "0";
+            if (a1 - a2 < 0)
+            {
+                to.dx = "-1";
+            }
+            if (b1 - b2 < 0)
+            {
+                to.dy = "-1";
+            }
+            if (a1 - a2 > 0)
+            {
+                to.dx = "+1";
+            }
+            if (b1 - b2 > 0)
+            {
+                to.dy = "+1";
+            }
+            d.to = to;
+            m.details.Add(d);
+            code.main.Add(m);
+
+            m = new main();
+            m.operation = "move";
+            m.details = new List<details>();
+            d = new details();
+            d.obj = "auto";
+            to = new to();
+            to.dx = "0";
+            to.dy = "0";
+            if (a1 - a2 < 0)
+            {
+                to.dx = "-1";
+            }
+            if (b1 - b2 < 0)
+            {
+                to.dy = "-1";
+            }
+            if (a1 - a2 > 0)
+            {
+                to.dx = "+1";
+            }
+            if (b1 - b2 > 0)
+            {
+                to.dy = "+1";
+            }
+            d.to = to;
+            m.details.Add(d);
+            code.main.Add(m);
+        }
+
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -82,15 +154,16 @@ namespace GeneratorLevels
 
             Code code = new Code();
             details d;
-            main m;
             constructor c;
             at at;
-            to to;
+
             code.constructor = new List<constructor>();
             c = new constructor();
             c.operation = "change";
             c.details = new List<details>();
             d = new details();
+            code.main = new List<main>();
+
             d.obj = name;
             at = new at();
             at.x = "" + x;
@@ -99,237 +172,10 @@ namespace GeneratorLevels
             c.details.Add(d);
             code.constructor.Add(c);
 
+            wayGeneration(ref code, w1, x, h1, y);
+            wayGeneration(ref code, w2, w1, h2, h1);
+            wayGeneration(ref code, w3, w2, h3, h2);
 
-            code.main = new List<main>();
-
-
-            int plus = 1;
-
-            if (w1 - x < 0)
-            {
-                plus = -2;
-            }
-            if (h1 - y < 0)
-            {
-                plus = -2;
-            }
-
-            m = new main();
-            m.operation = "check";
-            m.details = new List<details>();
-            d = new details();
-            d.obj = "auto";
-            d.state = "empty";
-            d.repeat = "" + (Math.Abs(y - h1) + Math.Abs(x - w1));
-            to = new to();
-            to.dx = "0";
-            to.dy = "0";
-            if (w1 - x < 0)
-            {
-                to.dx = "-1";
-            }
-            if (h1 - y < 0)
-            {
-                to.dy = "-1";
-            }
-            if (w1 - x > 0)
-            {
-                to.dx = "+1";
-            }
-            if (h1 - y > 0)
-            {
-                to.dy = "+1";
-            }
-            d.to = to;
-            m.details.Add(d);
-            code.main.Add(m);
-
-            m = new main();
-            m.operation = "move";
-            m.details = new List<details>();
-            d = new details();
-            d.obj = "auto";
-            to = new to();
-            to.dx = "0";
-            to.dy = "0";
-            if (w1 - x < 0)
-            {
-                to.dx = "-1";
-            }
-            if (h1 - y < 0)
-            {
-                to.dy = "-1";
-            }
-            if (w1 - x > 0)
-            {
-                to.dx = "+1";
-            }
-            if (h1 - y > 0)
-            {
-                to.dy = "+1";
-            }
-            d.to = to;
-            m.details.Add(d);
-            code.main.Add(m);
-
-
-            if (w2 - w1 < 0)
-            {
-                plus = -2;
-            }
-            if (h2 - h1 < 0)
-            {
-                plus = -2;
-            }
-
-            m = new main();
-            m.operation = "check";
-            m.details = new List<details>();
-            d = new details();
-            d.obj = "auto";
-            d.state = "empty";
-            d.repeat = "" + (Math.Abs(h2 - h1) + Math.Abs(w2 - w1));
-            to = new to();
-            to.dx = "0";
-            to.dy = "0";
-            if (w2 - w1 < 0)
-            {
-                to.dx = "-1";
-            }
-            if (h2 - h1 < 0)
-            {
-                to.dy = "-1";
-            }
-            if (w2 - w1 > 0)
-            {
-                to.dx = "+1";
-            }
-            if (h2 - h1 > 0)
-            {
-                to.dy = "+1";
-            }
-            d.to = to;
-            m.details.Add(d);
-            code.main.Add(m);
-
-            m = new main();
-            m.operation = "move";
-            m.details = new List<details>();
-            d = new details();
-            d.obj = "auto";
-            to = new to();
-            to.dx = "0";
-            to.dy = "0";
-            if (w2 - w1 < 0)
-            {
-                to.dx = "-1";
-            }
-            if (h2 - h1 < 0)
-            {
-                to.dy = "-1";
-            }
-            if (w2 - w1 > 0)
-            {
-                to.dx = "+1";
-            }
-            if (h2 - h1 > 0)
-            {
-                to.dy = "+1";
-            }
-            d.to = to;
-            m.details.Add(d);
-            code.main.Add(m);
-
-            if (w3 - w2 < 0)
-            {
-                plus = -2;
-            }
-            if (h3 - h2 < 0)
-            {
-                plus = -2;
-            }
-
-
-            m = new main();
-            m.operation = "check";
-            m.details = new List<details>();
-            d = new details();
-            d.obj = "auto";
-            d.state = "empty";
-            d.repeat = "" + (Math.Abs(y - h1) + Math.Abs(x - w1));
-            to = new to();
-            to.dx = "0";
-            to.dy = "0";
-            if (w3 - w2 < 0)
-            {
-                to.dx = "-1";
-            }
-            if (h3 - h2 < 0)
-            {
-                to.dy = "-1";
-            }
-            if (w3 - w2 > 0)
-            {
-                to.dx = "+1";
-            }
-            if (h3 - h2 > 0)
-            {
-                to.dy = "+1";
-            }
-            d.to = to;
-            m.details.Add(d);
-            code.main.Add(m);
-
-            m = new main();
-            m.operation = "move";
-            m.details = new List<details>();
-            d = new details();
-            d.obj = "auto";
-            to = new to();
-            to.dx = "0";
-            to.dy = "0";
-            if (w3 - w2 < 0)
-            {
-                to.dx = "-1";
-            }
-            if (h3 - h2 < 0)
-            {
-                to.dy = "-1";
-            }
-            if (w3 - w2 > 0)
-            {
-                to.dx = "+1";
-            }
-            if (h3 - h2 > 0)
-            {
-                to.dy = "+1";
-            }
-            d.to = to;
-            m.details.Add(d);
-            code.main.Add(m);
-
-            /*
-            maps.mainm = new List<mainm>();
-            mainm m;
-            List<levelm> ll;
-            levelm l;
-            positionm p;
-
-            for (int j = 0; j < level; j++)
-            {
-                m = new mainm();
-                ll = new List<levelm>();
-                for (int i = 0; i < ratio; i++)
-                {
-                    l = new levelm();
-                    l.positionm = new positionm() { x = "" + rand.Next(width), y = "" + rand.Next(height) };
-                    if (ll.IndexOf(l) == -1)
-                        ll.Add(l);
-                }
-                m.levelm = ll;
-                maps.mainm.Add(m);
-            }
-            */
             StreamWriter sw = new StreamWriter("objects.yml", false, Encoding.UTF8);
             var serializer = new Serializer();
             serializer.Serialize(sw, code);
